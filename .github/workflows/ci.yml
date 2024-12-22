@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Clang
+      if: matrix.compiler == 'clang++'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang
+
+    - name: Compile and Run
+      run: |
+        ${{ matrix.compiler }} bench.cpp -O2 && ./a.out
